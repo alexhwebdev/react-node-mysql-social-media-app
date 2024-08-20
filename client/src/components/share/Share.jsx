@@ -25,7 +25,7 @@ const Share = () => {
     // https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientinvalidatequeries
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['posts']
+        queryKey: ['posts'] // refresh posts query
       })
     } 
   });

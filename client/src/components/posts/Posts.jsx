@@ -34,8 +34,7 @@ const Posts = () => {
   // if (!data || data.length === 0) {
   //   return <div>No posts available.</div>;
   // }
-
-  console.log('data ', data)
+  // console.log('data ', data)
 
   return (
     <div className="posts">

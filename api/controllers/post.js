@@ -36,6 +36,7 @@ export const addPost = (req, res) => {
 
   // If token exists, validate it
   jwt.verify(token, "secretkey", (err, userInfo) => {
+    // console.log('addPost userInfo ', userInfo)
     if (err) return res.status(403).json("Token is not valid!");
 
     // const q = `
