@@ -16,9 +16,10 @@ import { AuthContext } from "../../context/authContext";
 const Post = ({ post }) => {
   // console.log('post ', post)
   const [commentOpen, setCommentOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const {currentUser} = useContext(AuthContext);
-  console.log('currentUser ', currentUser)
+  // console.log('currentUser ', currentUser)
 
   const { isPending, error, data } = useQuery({
     queryKey: ['likes', post.id],
@@ -27,23 +28,23 @@ const Post = ({ post }) => {
         return res.data;
       })
   })
-  console.log('data ', data)
+  // console.log('data ', data)
 
   const queryClient = useQueryClient();
 
-  // POST text
+  // POST or DELETE Like
   // With useMutation, we are gonna make post request and if successful, refetch our posts in home page. So after adding new post, it will immediately refresh fetch methods and show post
   const mutation = useMutation({
     mutationFn: (liked) => {
-      console.log('liked ', liked)
-
+      // console.log('liked ', liked)
+      // console.log('post ', post)
       if (liked) return makeRequest.delete("/likes?postId=" + post.id);
       return makeRequest.post("/likes", {postId: post.id});
     },
     // https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientinvalidatequeries
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['likes'] // refresh posts query
+        queryKey: ['likes'] // refresh likes query
       })
     } 
   });
@@ -51,6 +52,22 @@ const Post = ({ post }) => {
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
   }
+
+  const deleteMutation = useMutation({
+    mutationFn: (postId) => {
+      return makeRequest.delete("/posts/" + postId);
+    },
+    // https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientinvalidatequeries
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['posts'] // refresh likes query
+      })
+    } 
+  });
+
+  const handleDelete = () => {
+    deleteMutation.mutate(post.id);
+  };
 
   return (
     <div className="post">
@@ -71,7 +88,10 @@ const Post = ({ post }) => {
               </span>
             </div>
           </div>
-          <MoreHorizIcon />
+          <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
+          {menuOpen && post.userId === currentUser.id && (
+            <button onClick={handleDelete}>delete</button>
+          )}
         </div>
         <div className="content">
           <p>{post.desc}</p>
@@ -103,7 +123,7 @@ const Post = ({ post }) => {
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            12 Comments
+            {/* 12 Comments */}
           </div>
           <div className="item">
             <ShareOutlinedIcon />

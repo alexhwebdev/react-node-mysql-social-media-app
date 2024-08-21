@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import "./posts.scss";
 
-const Posts = () => {
+const Posts = ({userId}) => {
   // const { isLoading, error, data } = useQuery(['posts'], () => {
   //   makeRequest.get("/posts").then((res) => {
   //     return res.data;
@@ -13,7 +13,7 @@ const Posts = () => {
   const { isPending, error, data } = useQuery({
     queryKey: ['posts'],
     queryFn: () =>
-      makeRequest.get("/posts").then((res) => {
+      makeRequest.get("/posts?userId=" + userId).then((res) => {
         return res.data;
       })
   })
